@@ -1,0 +1,34 @@
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+coverage/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Local database and backups
+*.sqlite
+*.sqlite3
+*.sql
+*.dump
+postgres_data/
+pgdata/
+backups/
+
+# Mac files
+.DS_Store
+
+# Logs
+*.log

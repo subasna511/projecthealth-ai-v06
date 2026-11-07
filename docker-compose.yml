@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: projecthealth
+      POSTGRES_PASSWORD: local_demo_password
+      POSTGRES_DB: projecthealth
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U projecthealth -d projecthealth"]
+      interval: 3s
+      retries: 15
+  ai-engine:
+    build: ./ai-engine
+    ports:
+      - "8000:8000"
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgres://projecthealth:local_demo_password@db:5432/projecthealth
+      AI_ENGINE_URL: http://ai-engine:8000
+      FRONTEND_ORIGIN: http://localhost:5173
+      JWT_SECRET: ${JWT_SECRET:-local_only_change_before_deployment_please_123456789}
+      ASANA_ACCESS_TOKEN: ${ASANA_ACCESS_TOKEN:-}
+      ASANA_CLIENT_ID: ${ASANA_CLIENT_ID:-}
+      ASANA_CLIENT_SECRET: ${ASANA_CLIENT_SECRET:-}
+      ASANA_REDIRECT_URI: http://localhost:3001/api/asana/callback
+      TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:-}
+    ports:
+      - "3001:3001"
+    depends_on:
+      db:
+        condition: service_healthy
+      ai-engine:
+        condition: service_started
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+volumes:
+  pgdata:
