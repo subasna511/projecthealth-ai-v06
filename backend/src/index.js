@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "node:crypto";
 import { sendVerificationEmail } from "./email.js";
+import { createAiChatRouter } from "./ai-chat-router.js";
 const app = express();
 app.use(
   cors({ origin: process.env.FRONTEND_ORIGIN || "http://localhost:5173" }),
@@ -519,6 +520,7 @@ app.get(
   }),
 );
 app.use("/api", auth);
+app.use("/api/ai", createAiChatRouter({ authenticate: auth }));
 app.get(
   "/api/asana/status",
   route(async (req, res) => {

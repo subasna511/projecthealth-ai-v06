@@ -10,6 +10,7 @@ import {
   Upload,
 } from "lucide-react";
 import "./style.css";
+import AiChat from "./AiChat";
 const API = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 let authToken = sessionStorage.getItem("ph_token") || "";
 
@@ -878,6 +879,7 @@ function App() {
           <AlertTriangle size={18} /> Alerts{" "}
           <span className="count">{alerts.filter((a) => !a.read).length}</span>
         </button>
+        <AiChat />
         <div className="asideBottom">
           Signed in: {user.name}
           <br />
