@@ -1,4 +1,12 @@
 services:
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "127.0.0.1:8025:8025"
+    expose:
+      - "1025"
+    restart: unless-stopped
+
   db:
     image: postgres:15-alpine
     environment:
@@ -27,6 +35,9 @@ services:
       ASANA_CLIENT_SECRET: ${ASANA_CLIENT_SECRET:-}
       ASANA_REDIRECT_URI: http://localhost:3001/api/asana/callback
       TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:-}
+      SMTP_HOST: mailpit
+      SMTP_PORT: "1025"
+      MAIL_FROM: "ProjectHealth AI <noreply@projecthealth.local>"
     ports:
       - "3001:3001"
     depends_on:
@@ -40,5 +51,6 @@ services:
       - "5173:5173"
     depends_on:
       - backend
+
 volumes:
   pgdata:
